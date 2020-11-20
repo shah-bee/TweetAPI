@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using TweetAPI.Domain;
 
 namespace TweetAPI.Data
 {
-    public class ApplicationDataContext : DbContext
+    public class ApplicationDataContext : IdentityDbContext
     {
         public ApplicationDataContext(DbContextOptions<ApplicationDataContext> options)
             : base(options)

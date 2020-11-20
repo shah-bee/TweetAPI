@@ -5,7 +5,10 @@ using System.Threading.Tasks;
 
 namespace TweetAPI.Controllers.V1.Requests
 {
-    public class AuthenticateRequest
+    public class UserRegistrationRequest
     {
+        public string Email { get; set; }
+
+        public string Password { get; set; }
     }
 }

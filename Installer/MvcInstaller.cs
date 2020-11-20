@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TweetAPI.Controllers.V1;
+using TweetAPI.Services;
 
 namespace TweetAPI.Installer
 {
@@ -16,9 +18,10 @@ namespace TweetAPI.Installer
         public void InstallSevices(IConfiguration configuration, IServiceCollection services)
         {
             var jwtSettings = new JWTSettings();
-            configuration.Bind(nameof(JWTSettings), jwtSettings);
+            configuration.GetSection("JWTSettings").Bind(jwtSettings);
 
-            services.AddSingleton<JWTSettings>();
+            services.AddScoped<IIdentityService, IdentityService>();
+            services.AddSingleton(jwtSettings);
 
             services.AddAuthentication(x =>
             {
@@ -39,8 +42,6 @@ namespace TweetAPI.Installer
                 };
 
             });
-
-
 
             services.AddControllersWithViews();
             services.AddSwaggerGen(action =>

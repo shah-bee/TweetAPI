@@ -20,5 +20,11 @@ namespace TweetAPI.Contracts.V1
             public const string Update = Base + "/Posts/{postId}";
             public const string Delete = Base + "/Posts/{postId}";
         }
+
+        public static class Identity {
+
+            public const string Login = Base + "/Identity/Login";
+            public const string Register = Base + "/Identity/Register";
+        }
     }
 }
