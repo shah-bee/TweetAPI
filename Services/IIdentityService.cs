@@ -1,13 +1,16 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using TweetAPI.Domain;
 
 namespace TweetAPI.Controllers.V1
 {
     public interface IIdentityService
     {
-        Task<AuthenticateResult> RegisterUserAsync(string Email, string Password);
+        Task<AuthenticateResult> RegisterUserAsync(string email, string password);
 
-        Task<AuthenticateResult> LoginUserAsync(string Email, string Password);
+        Task<AuthenticateResult> LoginAsync(string email, string password);
+
+        Task<AuthenticateResult> RefreshTokenAsync(string Token, string RefreshToken);
         
     }
 }

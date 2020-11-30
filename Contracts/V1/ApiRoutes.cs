@@ -23,8 +23,9 @@ namespace TweetAPI.Contracts.V1
 
         public static class Identity {
 
-            public const string Login = Base + "/Identity/Login";
-            public const string Register = Base + "/Identity/Register";
+            public const string Login = Base + "/Identity/login";
+            public const string Register = Base + "/Identity/register";
+            public const string Refresh = Base + "/Identity/refresh";
         }
     }
 }

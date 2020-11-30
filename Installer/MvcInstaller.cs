@@ -23,6 +23,18 @@ namespace TweetAPI.Installer
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddSingleton(jwtSettings);
 
+            var tokenValidationParameters = new TokenValidationParameters()
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.Secret)),
+                ValidateAudience = false,
+                ValidateIssuer = false,
+                RequireExpirationTime = false,
+                ValidateLifetime = true
+            };
+
+            services.AddSingleton(tokenValidationParameters);
+
             services.AddAuthentication(x =>
             {
                 x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -31,33 +43,24 @@ namespace TweetAPI.Installer
             }).AddJwtBearer(x =>
             {
                 x.SaveToken = true;
-                x.TokenValidationParameters = new TokenValidationParameters()
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.Secret)),
-                    ValidateAudience = false,
-                    ValidateIssuer = false,
-                    RequireExpirationTime = false,
-                    ValidateLifetime = true
-                };
-
+                x.TokenValidationParameters = tokenValidationParameters;
             });
 
             services.AddControllersWithViews();
             services.AddSwaggerGen(action =>
             {
-                action.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo() { Title = "TweetAPI", Version = "v1" });
+                action.SwaggerDoc("v1", new OpenApiInfo { Title = "TweetAPI", Version = "v1" });
                 var securityToken = new Dictionary<string, IEnumerable<string>>
                 {
                     { "Bearer", new string[0] }
                 };
 
-                action.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme()
+                action.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Scheme = "ApiKeyScheme",
                     Name = "Authorization",
-                    In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-                    Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey
                 });
 
                 var openApiSecurityRequirement = new OpenApiSecurityRequirement {

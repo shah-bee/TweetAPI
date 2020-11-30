@@ -9,6 +9,7 @@ using TweetAPI.Contracts.V1;
 using TweetAPI.Controllers.V1.Requests;
 using TweetAPI.Controllers.V1.Responses;
 using TweetAPI.Domain;
+using TweetAPI.Extensions;
 using TweetAPI.Services;
 
 namespace TweetAPI.Controllers.V1
@@ -48,7 +49,14 @@ namespace TweetAPI.Controllers.V1
         [HttpPut(ApiRoutes.Posts.Update)]
         public async Task<IActionResult> Update([FromRoute] Guid postId, [FromBody] PostRequestToUpdate postToUpdate)
         {
-            var exists = PostService.GetPostAsync(postId);
+            var currentUser = HttpContext.GetUserId();
+
+            var exists = await PostService.GetPostAsync(postId);
+
+            if (!exists.UserId.Equals(currentUser))
+            {
+                return BadRequest(new { error = "You are not authroized to change this post" });
+            }
 
             var post = new Post { Id = postId, Name = postToUpdate.Name };
 
@@ -75,7 +83,7 @@ namespace TweetAPI.Controllers.V1
         [HttpPost(ApiRoutes.Posts.Create)]
         public async Task<IActionResult> Create([FromBody] PostRequest postToCreate)
         {
-            var post = new Post { Name = postToCreate.Name };
+            var post = new Post { Name = postToCreate.Name, UserId = HttpContext.GetUserId() };
             await PostService.CreatePostAsync(post);
 
             var baseUrl = $"{HttpContext.Request.Scheme}/{HttpContext.Request.Host.ToUriComponent()}";

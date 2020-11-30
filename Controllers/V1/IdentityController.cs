@@ -18,42 +18,76 @@ namespace TweetAPI.Controllers.V1
         }
 
         [HttpPost(ApiRoutes.Identity.Register)]
-        public async Task<IActionResult> Register([FromBody] UserRegistrationRequest request) {
-
+        public async Task<IActionResult> Register([FromBody] UserRegistrationRequest request)
+        {
             var registrationResult = await _identityService.RegisterUserAsync(request.Email, request.Password);
-
-            if (!registrationResult.Success) {
-                return BadRequest(new AuthenticationResult { 
-                   Messages = registrationResult.ErrorMessages
+            if (!registrationResult.Success)
+            {
+                return BadRequest(new AuthFailedResponse
+                {
+                    Errors = registrationResult.ErrorMessages
                 });
-                    
             }
 
-            return Ok(new AuthenticationResult { Token = registrationResult.Token });
+            return Ok(new AuthSuccessResponse
+            {
+                Token = registrationResult.Token,
+                RefreshToken = registrationResult.RefreshToken.ToString()
+            });
         }
 
         [HttpPost(ApiRoutes.Identity.Login)]
         public async Task<IActionResult> Login([FromBody] UserLoginRequest request)
         {
-            if (!ModelState.IsValid) {
-                return BadRequest(new AuthenticationResult
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new AuthFailedResponse
                 {
-                    Messages = ModelState.Values.SelectMany(o => o.Errors.Select(x => x.ErrorMessage))
+                    Errors = ModelState.Values.SelectMany(o => o.Errors.Select(x => x.ErrorMessage))
                 });
             }
 
-            var loginResult = await _identityService.LoginUserAsync(request.Email, request.Password);
-
+            var loginResult = await _identityService.LoginAsync(request.Email, request.Password);
             if (!loginResult.Success)
             {
-                return BadRequest(new AuthenticationResult
+                return BadRequest(new AuthFailedResponse
                 {
-                    Messages = loginResult.ErrorMessages
+                    Errors = loginResult.ErrorMessages
                 });
-
             }
 
-            return Ok(new AuthenticationResult { Token = loginResult.Token });
+            return Ok(new AuthSuccessResponse
+            {
+                Token = loginResult.Token,
+                RefreshToken = loginResult.RefreshToken.ToString()
+            });
+        }
+
+        [HttpPost(ApiRoutes.Identity.Refresh)]
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new AuthFailedResponse
+                {
+                    Errors = ModelState.Values.SelectMany(o => o.Errors.Select(x => x.ErrorMessage))
+                });
+            }
+
+            var loginResult = await _identityService.RefreshTokenAsync(request.Token, request.RefreshToken);
+            if (!loginResult.Success)
+            {
+                return BadRequest(new AuthFailedResponse
+                {
+                    Errors = loginResult.ErrorMessages
+                });
+            }
+
+            return Ok(new AuthSuccessResponse
+            {
+                Token = loginResult.Token,
+                RefreshToken = loginResult.RefreshToken.ToString()
+            });
         }
     }
 }

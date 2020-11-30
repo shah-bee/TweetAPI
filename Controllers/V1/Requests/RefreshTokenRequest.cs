@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 
 namespace TweetAPI.Controllers.V1.Requests
 {
-    public class AuthenticationResult
+    public class RefreshTokenRequest
     {
         public string Token { get; set; }
 
-        public IEnumerable<string> Messages { get; set; }
+        public string RefreshToken { get; set; }
     }
 }
