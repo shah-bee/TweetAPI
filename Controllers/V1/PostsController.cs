@@ -14,6 +14,7 @@ using TweetAPI.Services;
 
 namespace TweetAPI.Controllers.V1
 {
+    [ApiController]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class PostsController : Controller
     {

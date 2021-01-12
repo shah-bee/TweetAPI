@@ -34,7 +34,7 @@ namespace TweetAPI
             !x.IsInterface && !x.IsAbstract).Select(Activator.CreateInstance).Cast<IInstaller>().ToList();
 
             installerClasses.ForEach(o => o.InstallSevices(Configuration, services));
-            
+           
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -45,6 +45,7 @@ namespace TweetAPI
                 app.UseDeveloperExceptionPage();
             }
 
+   
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 

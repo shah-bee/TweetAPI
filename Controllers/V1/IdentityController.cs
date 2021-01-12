@@ -8,6 +8,7 @@ using TweetAPI.Controllers.V1.Requests;
 
 namespace TweetAPI.Controllers.V1
 {
+    [ApiController]
     public class IdentityController : Controller
     {
         private readonly IIdentityService _identityService;
